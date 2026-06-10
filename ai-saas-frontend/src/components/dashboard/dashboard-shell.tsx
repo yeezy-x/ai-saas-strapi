@@ -16,6 +16,8 @@ import {
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { logoutAction } from "../../../actions/auth";
+import { ModeToggle } from "../ui/mode-toggle";
 
 type DashboardShellProps = {
   userEmail: string;
@@ -113,7 +115,7 @@ export function DashboardShell({
             <span>
               Theme
             </span>
-            {/*<ModeToggle/>*/}
+            <ModeToggle /> 
           </div>
           <div className="flex min-w-0 items-center gap-2 rounded-md border border-border/60 bg-background/80 px-2.5 py-2">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted text-muted-foreground">
@@ -135,7 +137,7 @@ export function DashboardShell({
           </div>
 
           {/* Logout */}
-          <form action="/api/auth/logout" method="POST">
+          <form action={logoutAction}>
             <Button
               type="submit"
               variant="outline"
