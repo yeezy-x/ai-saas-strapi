@@ -58,7 +58,7 @@ export function registerWithStrapi(username:string, email:string, password:strin
 }
 
 export function loginWithStrapi(identifier:string, password:string){
-    return strapiFetch<strapiAuthResponse>('/api/auth/local/login',{
+    return strapiFetch<strapiAuthResponse>('/api/auth/local',{
         method: 'POST',
         body: JSON.stringify({
             identifier,
