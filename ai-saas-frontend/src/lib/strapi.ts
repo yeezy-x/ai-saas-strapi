@@ -1,3 +1,5 @@
+import { StringDecoder } from "node:string_decoder";
+
 const DEFAULT_STRAPI_URL = 'http://localhost:1337';
 
 export const COOKIE_NAME ='strapi_jwt'
@@ -71,4 +73,90 @@ export function fetchCurrentUser(jwt:string){
     return strapiFetch<StrapiUser>('/api/users/me', {
         method: 'GET',
     }, jwt) 
+}
+
+type One<T>={
+    data:T
+}
+
+type Many<T>={
+    data:T[]
+}
+
+async function strapiCreate<T>(jwt:string,
+    path:string,
+    fields:Record<string,unknown>,
+){
+    const res=await strapiFetch<One<T>>(
+        path,
+        {
+            method:"POST",
+            body:JSON.stringify({data:fields})
+        },
+        jwt
+    )
+    return res.data;
+}
+
+async function strapiList<T>(
+  jwt: string,
+  path: string,
+  pageSize: string,
+): Promise<T[]> {
+  const q = new URLSearchParams({
+    sort: "createdAt:desc",
+    "pagination[pageSize]": pageSize,
+  });
+
+  const res = await strapiFetch<Many<T>>(`${path}?${q}`,{},jwt);
+  return res.data;
+}
+
+export type ChatRole="user"|"assistant"  
+
+export type StrapiMessage = {
+  id: number;
+  documentId: string;
+  content: string;
+  role: ChatRole;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type StrapiConversation = {
+  id: number;
+  documentId: string;
+  title: string | null;
+  messages?: StrapiMessage[];
+  createdAt: string;
+  updatedAt: string;
+};
+
+export async function createConversation(jwt:string, params:{title:string}):Promise<StrapiConversation>{
+    return strapiCreate(jwt,'/api/conversations',{title:params.title})
+}
+
+export async function getConversation(jwt:string,documentId:string){
+    try{
+        const res=await strapiFetch<One<StrapiConversation>>(
+            `/api/conversations/${encodeURIComponent(documentId)}`,
+            {},
+            jwt
+        );
+        return res.data;
+    }catch(error){
+        throw error;
+    }
+} 
+
+
+export async function createMessage(
+    jwt:string,
+    params:{content:string, role:ChatRole, conversationDocumentId:string}
+):Promise<StrapiMessage>{
+    return strapiCreate(jwt,'/api/messages',{
+        content:params.content,
+        role:params.role,
+        conversation: params.conversationDocumentId
+    })
 }
