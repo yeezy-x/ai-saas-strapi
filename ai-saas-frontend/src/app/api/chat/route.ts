@@ -105,7 +105,9 @@ export async function POST(request: Request) {
     });
 
     return result.toUIMessageStreamResponse({
-      headers: { "x-conversation-id": conversationDocumentId! },
+      messageMetadata:()=>({
+        conversationId: conversationDocumentId!
+      })
     });
   } catch (error) {
     console.error("Chat route error:", error);
