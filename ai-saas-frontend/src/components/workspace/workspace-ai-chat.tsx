@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
-import { useRouter,useSearchParams } from "next/navigation";
+import { useRouter,useSearchParams, usePathname } from "next/navigation";
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { toast } from "sonner";
@@ -56,6 +56,8 @@ export default function WorkspaceAiChat({
   const router = useRouter();
   const searchParams = useSearchParams();
   const conversationId = searchParams.get("c");
+  const pathname=usePathname();
+  
 
   const transport = useMemo(
     () =>
@@ -76,9 +78,12 @@ export default function WorkspaceAiChat({
     transport,
     onFinish: ({ message }) => {
       const metadata = message.metadata as ChatMessageMetadata;
-
       if (metadata?.conversationId && !conversationId) {
-        router.replace(`/dashboard/chat?c=${metadata.conversationId}`);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set("c", metadata.conversationId);
+        router.replace(
+          `${pathname}?${params.toString()}`
+        );
       }
     },
     onError(error) {
@@ -89,7 +94,6 @@ export default function WorkspaceAiChat({
   const handleSubmit = (message: PromptInputMessage) => {
     const text = message.text?.trim();
     if (!text) return;
-
     sendMessage({ text });
     setInput("");
   };
