@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { getAuthToken, getCurrentUser } from "@/lib/auth";
 import { createImageRecord, StrapiError } from "@/lib/strapi";
 
-const IMAGE_MODEL = "gemini-2.5-flash-image";
+const IMAGE_MODEL = "gemini-3.1-flash-image";
 
 type GoogleImageAspectRatio = "1:1" | "3:4" | "4:3" | "9:16" | "16:9";
 

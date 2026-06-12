@@ -1,5 +1,3 @@
-import { StringDecoder } from "node:string_decoder";
-
 const DEFAULT_STRAPI_URL = 'http://localhost:1337';
 
 export const COOKIE_NAME ='strapi_jwt'
@@ -193,6 +191,42 @@ export function listImageRecords(
   return strapiList(
     jwt,
     "/api/images",
+    "24"
+  );
+}
+
+export type StrapiVideoRecord = {
+  id: number;
+  documentId: string;
+  prompt: string | null;
+  videoUrl: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export function createVideoRecord(
+  jwt: string,
+  params: {
+    prompt: string;
+    videoUrl: string;
+  }
+): Promise<StrapiVideoRecord> {
+  return strapiCreate(
+    jwt,
+    "/api/videos",
+    {
+      prompt: params.prompt,
+      videoUrl: params.videoUrl,
+    }
+  );
+}
+
+export function listVideoRecords(
+  jwt: string
+): Promise<StrapiVideoRecord[]> {
+  return strapiList(
+    jwt,
+    "/api/videos",
     "24"
   );
 }

@@ -69,7 +69,7 @@ export default function ImagePage() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [gallery.length]);
 
   const handleGenerate = async (e: React.FormEvent) => {
     e.preventDefault();
